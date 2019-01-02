@@ -1,5 +1,10 @@
 # htmlfy
-Python Package for HTML minification.  
+Python package for HTML minification.  
+
+## Installation
+```shell
+python3 -mpip install htmlfy
+```
 
 ## Usage
 
