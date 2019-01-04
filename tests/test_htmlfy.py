@@ -83,6 +83,16 @@ class TestHtmlfy(unittest.TestCase):
         html_minified ="<p><ul><?php for($i=1; $i <= 10; $i++):?><li>This is line #<?=$i?></li><?php endfor;?></ul></p>"
         self.assertEqual(htmlfy.minify_html(html), html_minified)
 
+    def test_preserve_php_in_text(self):
+        html = """
+        <p>
+            This text should have <?php echo 'spaces'; ?> there
+        </p>
+        """
+        html_minified ="<p>This text should have <?php echo 'spaces'; ?> there</p>"
+        self.assertEqual(htmlfy.minify_html(html), html_minified)
+
+
     def test_preserve_inside_tag(self):
         html = """
         <p class="myclass <?php if($Hidden):?>hide<?php endif;?>">

@@ -47,6 +47,7 @@ class Htmlfy():
             html = self._remove_comments(html)
         if preserve:    
             html = self._save_preserves(html)
+            html = self._save_preserves_inline(html)
         if strict_spaces:
             html = self._strict_spaces(html)
         if no_space_between_tags:
@@ -101,17 +102,26 @@ class Htmlfy():
         input_html = re.sub(r"<script.*?>.+?</script>",self._save_preserves_callback,input_html,flags=re.I|re.M|re.S)
         input_html = re.sub(r"<pre.*?>.+?</pre>",self._save_preserves_callback,input_html,flags=re.I|re.M|re.S)
         input_html = re.sub(r"<textarea.*?>.+?</textarea>",self._save_preserves_callback,input_html,flags=re.I|re.M|re.S)
-        input_html = re.sub(r"<\?(=|php).+?\?>",self._save_preserves_callback,input_html,flags=re.I|re.M|re.S)
         return input_html
 
-    def _save_preserves_callback(self,html_source):
+    def _save_preserve_add(self,html):
         self._preserves_count += 1
         preserve_name = "%s_%s" % (self._preserves_count,self._uniqid())
-        self._preserves[preserve_name] = html_source.group(0)
-        return "<preserve:%s>" % preserve_name
+        self._preserves[preserve_name] = html
+        return preserve_name
+
+    def _save_preserves_callback(self,html_source):
+        return "<preserve:%s>" % self._save_preserve_add(html_source.group(0))
+
+    def _save_preserves_inline(self,input_html):
+        input_html = re.sub(r"<\?(=|php).+?\?>",self._save_preserves_inline_callback,input_html,flags=re.I|re.M|re.S)
+        return input_html
+
+    def _save_preserves_inline_callback(self,html_source):
+        return "{preserve:%s}" % self._save_preserve_add(html_source.group(0))
 
     def _restore_preserves(self,html_preserved):
-        return re.sub(r"<preserve:(\d+_[a-z0-9]+)>",self._restore_preserves_callback,html_preserved)
+        return re.sub(r"[<{]preserve:(\d+?_[a-z0-9]+?)[>}]",self._restore_preserves_callback,html_preserved)
 
     def _restore_preserves_callback(self,preserve_name):
         return self._preserves[preserve_name.group(1)]
