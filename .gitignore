@@ -1,3 +1,4 @@
 htmlfy.egg-info
 dist
 build
+*.pyc

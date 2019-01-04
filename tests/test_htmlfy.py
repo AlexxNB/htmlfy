@@ -67,7 +67,7 @@ class TestHtmlfy(unittest.TestCase):
                <span>Text    in    tag3</span>
         </p>
         """
-        html_minified ="<p><span>Text in tag1</span> Text outside tags<span>Text in tag2</span><span>Text in tag3</span></p>"
+        html_minified ="<p><span>Text in tag1</span>Text outside tags<span>Text in tag2</span><span>Text in tag3</span></p>"
         self.assertEqual(htmlfy.minify_html(html), html_minified)
 
     def test_php_preserve(self):
@@ -81,6 +81,15 @@ class TestHtmlfy(unittest.TestCase):
         </p>
         """
         html_minified ="<p><ul><?php for($i=1; $i <= 10; $i++):?><li>This is line #<?=$i?></li><?php endfor;?></ul></p>"
+        self.assertEqual(htmlfy.minify_html(html), html_minified)
+
+    def test_preserve_inside_tag(self):
+        html = """
+        <p class="myclass <?php if($Hidden):?>hide<?php endif;?>">
+            Hidden
+        </p>
+        """
+        html_minified ='<p class="myclass <?php if($Hidden):?>hide<?php endif;?>">Hidden</p>'
         self.assertEqual(htmlfy.minify_html(html), html_minified)
 
     def test_javascript_preserve(self):
@@ -112,7 +121,7 @@ class TestHtmlfy(unittest.TestCase):
 
         </style>
         """
-        html_minified ='<style type="text/css"> a{ color: blue; } a:hover{ color: gray; }</style>'
+        html_minified ='<style type="text/css">a{color: blue;} a:hover{color: gray;}</style>'
         self.assertEqual(htmlfy.minify_html(html), html_minified)
 
     def test_html5_attributes_minification(self):

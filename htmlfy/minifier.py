@@ -42,7 +42,7 @@ class Htmlfy():
                 html5_min_attr=True,
                 html5_emptytags=True):
 
-        html = self._strict_overall(html)
+        
         if remove_comments:
             html = self._remove_comments(html)
         if preserve:    
@@ -57,6 +57,7 @@ class Htmlfy():
             html = self._html5_emptytags(html)
         if preserve: 
             html = self._restore_preserves(html)
+        html = self._strict_overall(html)
         return html
 
     def minify_file(self,source_path,minified_path,strict_spaces=True,no_space_between_tags=True,preserve=True,remove_comments=True,html5_min_attr=True,html5_emptytags=True):
@@ -76,7 +77,10 @@ class Htmlfy():
 
     def _strict_spaces(self,input_html):
         input_html = re.sub(r"\s{2,}",' ',input_html)
-        return re.sub(r"\s<",'<',input_html)
+        input_html =  re.sub(r"(>[^<]+?)\s<",r"\1<",input_html)
+        input_html =  re.sub(r">\s([^>]+?<)",r">\1",input_html)
+        input_html =  re.sub(r"{\s(.+?)\s}",r"{\1}",input_html)
+        return input_html
 
     def _no_space_between_tags(self,input_html):
         return re.sub(r">\s+?<",'><',input_html)

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="htmlfy",
-    version="0.1.1",
+    version="0.1.2",
     author="Alexey Schebelev",
     description="Python package for HTML minification",
     long_description=long_description,
